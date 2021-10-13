@@ -1,12 +1,12 @@
-# Refactoring: Improving the Design of Existing Code (2nd Edition)
+# Chapter 1 Refactoring: A First Example
 
-## Chapter 1 Refactoring: A First Example
+Refactoring: Improving the Design of Existing Code (2nd Edition)
 
 - <https://book-refactoring2.ifmicro.com/docs/ch1.html>
 - [Tips in this chapter](https://medium.com/@emaleavil/refactoring-a-first-example-32a2709c82b8)
 - [Refactoring: This class is too large](https://martinfowler.com/articles/class-too-large.html) by Martin Fowler, April 2020
 
-### 1.1 The Starting Point
+## 1.1 The Starting Point
 
 `python starting_point.py`
 
@@ -14,7 +14,7 @@
 - [invoices.json](./data/invoices.json)
 - [starting_point.py](./starting_point.py)
 
-### 1.2 Comments on the Starting Program
+## 1.2 Comments on the Starting Program
 
 变化带来的挑战
 
@@ -26,7 +26,16 @@
 
 如果程序杂乱无章，先为它整理出结构来，再做需要的修改，通常来说更加简单。
 
-### 1.3 The First Step in Refactoring
+## Status0: Encapsulate JSON object to class
+
+在 `JavaScript` 中的对象结构需要在 `Python` 中进行加工，才是一个真正的对象(Dict to Object)。这件事应该可以提到第一步来做。
+
+`python status0.py`
+
+- [__init__.py](./__init__.py)
+- [status0.py](./status0.py)
+
+## 1.3 The First Step in Refactoring
 
 重构的第一个步骤永远相同：首先确保即将修改的代码拥有一组可靠的测试。
 
@@ -34,7 +43,7 @@
 
 而一旦你着手写单元测试，就会发现现有的函数对测试并不友好，这也是要在后续的重构中需要解决的问题。
 
-### 1.4 Decomposing the statement Function
+## 1.4 Decomposing the statement Function
 
 拆解长函数的方法，从整个函数中分离出不同的关注点。
 
@@ -57,13 +66,13 @@
 - 第 3 步，使用 6.1-提炼函数（106）提炼出计算总数的函数；
 - 第 4 步，使用 6.2-内联变量（123）完全移除中间变量
 
-### 1.5 Status: Lots of Nested Functions
+## 1.5 Status1: Lots of Nested Functions
 
 现在代码结构已经好多了。顶层的statement函数现在只剩 7 行代码，而且它处理的都是与打印详单相关的逻辑。与计算相关的逻辑从主函数中被移走，改由一组函数来支持。每个单独的计算过程和详单的整体结构，都因此变得更易理解了。
 
-`python nested_functions.py`
+`python status1_nested_functions.py`
 
-- [nested_functions.py](./nested_functions.py)
+- [status1_nested_functions.py](./status1_nested_functions.py)
 
 ```python
 def statement(invoice, plays):
@@ -83,28 +92,26 @@ def statement(invoice, plays):
   return result
 ```
 
-### Encapsulate JSON object to class
-
-在我按照书中的提示，用 `Python` 的方式实现了嵌套函数时，我意识到有一件额外的工作需要完成，那就是这些在 `JavaScript` 中的对象结构需要在 `Python` 中进行加工，才是一个真正的对象(Dict to Object)。其实这件事应该可以提到第一步来做。
-
-`python encapsulate_json.py`
-
-- [encapsulate_json.py](./encapsulate_json.py)
-
-### 1.6 Splitting the Phases of Calculation and Formatting
+## 1.6 Splitting the Phases of Calculation and Formatting
 
 为实现同样的计算函数可以被文本版详单和HTML版详单共用，希望将计算逻辑和渲染逻辑拆分成 2 部分
 
 创建一个对象，作为在两个阶段间传递的中转数据结构，然后将它作为第一个参数传递给 `render_plain_text`
 
-### 1.7 Status: Separated into Two Files(and Phases)
+## 1.7 Status2: Separated into Two Files(and Phases)
+
+`pytest test_statement.py`
+
+- [_statement.py](./_statement.py): `StatementData` && `create_statement_data()`
+- [status2_separate_into_2_phases.py](./status2_separate_into_2_phases.py)
+- [test_statement.py](./test_statement.py)
 
 ```python
 def statement(invoice, plays):
     return render_plain_text(create_statement_data(invoice, plays))
 ```
 
-### 1.8 Reorganizing the Calculations by Type
+## 1.8 Reorganizing the Calculations by Type
 
 用多态的结构来实现“计算逻辑的差异是由类型代码确定”。
 
@@ -115,22 +122,23 @@ def statement(invoice, plays):
 - 将函数搬移进 Calculator 类
 - 使 PerformanceCalculator 表现出多态性(拆分出 ComedyCalculator/TragedyCalculator)
 
-### 1.9 Status: Creating the Data with the Polymorphic
+## 1.9 Status3: Creating the Data with the Polymorphic
 
-`python statement.py`
+`python status3_polymorphic.py`
 
-- [statement.py](./statement.py)
-- [create_statement_data.py](./create_statement_data.py)
+- [_statement_polymorphic.py](./_statement_polymorphic.py)
+- [status3_polymorphic.py](./status3_polymorphic.py)
 
 新结构带来的好处是，不同戏剧种类的计算各自集中到了一处地方。如果大多数修改都涉及特定类型的计算，像这样按类型进行分离就很有意义。当添加新剧种时，只需要添加一个子类，并在创建函数中返回它。
 
-### 1.10 Final Thoughts
+## 1.10 Final Thoughts
 
-本章的重构有3个较为重要的节点，分别是
+本章的重构有 4 个较为重要的节点，分别是
 
-- 1.4 将 `statement` 函数分解成一组嵌套的函数
-- 1.6 拆分计算逻辑和渲染逻辑
-- 1.8 引入多态性来处理计算逻辑
+- [Status0 将 JSON 数据结构对象化](./status0.py)
+- 1.4 将 `statement` 函数分解成一组嵌套的函数 [status1](status1_nested_functions.py)
+- 1.6 拆分计算逻辑和渲染逻辑 [status2](status2_separate_into_2_phases.py)
+- 1.8 引入多态性来处理计算逻辑 [status3](./status3_polymorphic.py)
 
 每一步都给代码添加了更多的结构，更好的表达代码的意图。
 
