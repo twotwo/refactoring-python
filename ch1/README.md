@@ -83,6 +83,14 @@ def statement(invoice, plays):
   return result
 ```
 
+### Encapsulate JSON object to class
+
+在我按照书中的提示，用 `Python` 的方式实现了嵌套函数时，我意识到有一件额外的工作需要完成，那就是这些在 `JavaScript` 中的对象结构需要在 `Python` 中进行加工，才是一个真正的对象(Dict to Object)。其实这件事应该可以提到第一步来做。
+
+`python encapsulate_json.py`
+
+- [encapsulate_json.py](./encapsulate_json.py)
+
 ### 1.6 Splitting the Phases of Calculation and Formatting
 
 为实现同样的计算函数可以被文本版详单和HTML版详单共用，希望将计算逻辑和渲染逻辑拆分成 2 部分
