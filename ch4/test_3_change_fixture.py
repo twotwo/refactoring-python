@@ -1,6 +1,3 @@
-from starting_point import Province
-
-
 def test_change_production(asia):
     asia.producers[0].set_production(20)
     assert -6 == asia.shortfall

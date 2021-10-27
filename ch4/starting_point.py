@@ -36,6 +36,9 @@ class Province(object):
         self._producers.append(arg)
         self._total_production += arg.production
 
+    def set_demand(self, demand: int):
+        self._demand = demand
+
     @property
     def producers(self):
         return self._producers
