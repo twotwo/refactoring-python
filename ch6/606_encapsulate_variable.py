@@ -14,14 +14,14 @@ class OwnerBefore:
 
 class OwnerAfter:
     def __init__(self) -> None:
-        self._default_owner_data = PersonBefore(first_name="Martin", last_name="Fowler")
+        self.__default_owner_data = PersonBefore(first_name="Martin", last_name="Fowler")
 
     @property
     def default_owner(self) -> PersonBefore:
-        return self._default_owner_data
+        return self.__default_owner_data
 
     def set_default_owner(self, arg: PersonBefore):
-        self._default_owner_data = arg
+        self.__default_owner_data = arg
 
 
 class PersonAfter:

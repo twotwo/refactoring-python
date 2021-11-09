@@ -1,4 +1,4 @@
-# Chapter 6 Composing Methods
+# Chapter 6 A First Set of Refactorings
 
 Refactoring: Improving the Design of Existing Code (2nd Edition)
 
@@ -10,6 +10,28 @@ Refactoring: Improving the Design of Existing Code (2nd Edition)
 Motivation
 
 - 将意图与实现分开
+
+Sketch
+
+```python
+def print_owing_before(invoice):
+    # print_banner()
+    outstanding = calculate_outstanding()
+
+    # print details
+    print(f"name: {invoice.customer}")
+    print(f"amount: {outstanding}")
+
+def print_owing_after(invoice):
+    # print_banner()
+    outstanding = calculate_outstanding()
+
+    def print_details(outstanding):
+        print(f"name: {invoice.customer}")
+        print(f"amount: {outstanding}")
+
+    print_details(outstanding)
+```
 
 Examples
 
@@ -39,8 +61,8 @@ def get_rating_after(driver):
 
 Examples
 
-- `python 602_inline_function.py.py`
-- [602_inline_function.py.py](./602_inline_function.py.py)
+- `python 602_inline_function.py`
+- [602_inline_function.py](./602_inline_function.py)
 
 ## 6.3 Extract Variable
 
@@ -94,7 +116,8 @@ def has_discount_after(order):
 
 Motivation
 
-- 命名直观和具有适当的作用域的函数让系统具有更好的灵活性
+- Function declarations represents the joints in our software systems
+- Good joints allow me to add new parts to the system easily
 
 Sketch
 
@@ -113,7 +136,8 @@ Examples
 
 Motivation
 
-- 封装能提供一个清晰的观测点，可由此监控数据的变化和使用情况；而且还可以轻松地添加数据被修改时的验证或后续逻辑
+- 封装能提供一个清晰的观测点，可由此监控数据的变化和使用情况
+- 还可以轻松地添加数据被修改时的验证或后续逻辑
 
 Sketch
 
@@ -125,14 +149,14 @@ class OwnerBefore:
 
 class OwnerAfter:
     def __init__(self) -> None:
-        self._default_owner_data = PersonBefore(first_name="Martin", last_name="Fowler")
+        self.__default_owner_data = PersonBefore(first_name="Martin", last_name="Fowler")
 
     @property
     def default_owner(self) -> PersonBefore:
-        return self._default_owner_data
+        return self.__default_owner_data
 
     def set_default_owner(self, arg: PersonBefore):
-        self._default_owner_data = arg
+        self.__default_owner_data = arg
 ```
 
 Examples
@@ -248,3 +272,6 @@ Sketch
 ```
 
 Examples
+
+- `python 611_split_phase.py`
+- [611_split_phase.py](./611_split_phase.py)
