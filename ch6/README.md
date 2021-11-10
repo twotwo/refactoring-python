@@ -268,7 +268,15 @@ Motivation
 Sketch
 
 ```python
-
+# before
+row_order = "refactoring-001 1"
+price_list = {"001": 60}
+order = row_order.split()
+product_price = price_list[order[0].split("-")[1]]
+order_price = int(order[1]) * product_price
+# after
+order = paser_order(row_order)
+order_price = calculate_price(order, price_list)
 ```
 
 Examples

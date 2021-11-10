@@ -1,6 +1,38 @@
 from dataclasses import dataclass
 
 
+def order_price_before():
+    # product-id price
+    row_order = "refactoring-001 1"
+    price_list = {"001": 60}
+    order = row_order.split()
+    product_price = price_list[order[0].split("-")[1]]
+    order_price = int(order[1]) * product_price
+    print("order_price", order_price)
+
+
+@dataclass
+class Order:
+    name: str
+    id: str
+    quantity: int
+
+
+def order_price_after():
+    def paser_order(raw):
+        data = raw.split()
+        return Order(name=data[0].split("-")[0], id=data[0].split("-")[1], quantity=int(data[1]))
+
+    def calculate_price(order: Order, price_list):
+        return order.quantity * price_list[order.id]
+
+    row_order = "refactoring-001 1"
+    price_list = {"001": 60}
+    order = paser_order(row_order)
+    order_price = calculate_price(order, price_list)
+    print("order_price_after", order_price)
+
+
 @dataclass
 class Product:
     base_price: int
@@ -55,6 +87,9 @@ def apply_shipping(price_data, shipping_method: ShippingMethod):
 
 
 if __name__ == "__main__":
+    order_price_before()
+    order_price_after()
+
     product = Product(base_price=10, discount_threshold=2, discount_rate=0.3)
     shipping_method = ShippingMethod(discount_threshold=88, discounted_fee=5, fee_per_case=1)
     print(price_order_before(product, 3, shipping_method))
