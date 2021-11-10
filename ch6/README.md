@@ -104,8 +104,8 @@ Sketch
 
 ```python
 def has_discount_before(order):
-    base_p_rice = order.base_price()
-    return base_p_rice > 1000
+    base_price = order.base_price()
+    return base_price > 1000
 
 
 def has_discount_after(order):

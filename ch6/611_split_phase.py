@@ -52,13 +52,13 @@ def price_order_before(product: Product, quantity: int, shipping_method: Shippin
     base_price = product.base_price * quantity
     discount = max(quantity - product.discount_threshold, 0) * product.base_price * product.discount_rate
     # Calc shipping cost
-    shippingPerCase = (
+    shipping_per_case = (
         shipping_method.discounted_fee
         if base_price > shipping_method.discount_threshold
         else shipping_method.fee_per_case
     )
-    shippingCost = quantity * shippingPerCase
-    price = base_price - discount + shippingCost
+    shipping_cost = quantity * shipping_per_case
+    price = base_price - discount + shipping_cost
     return price
 
 
@@ -77,13 +77,13 @@ def calculate_pricing_data(product: Product, quantity: int):
 
 
 def apply_shipping(price_data, shipping_method: ShippingMethod):
-    shippingPerCase = (
+    shipping_per_case = (
         shipping_method.discounted_fee
         if price_data["basePrice"] > shipping_method.discount_threshold
         else shipping_method.fee_per_case
     )
-    shippingCost = price_data["quantity"] * shippingPerCase
-    return price_data["basePrice"] - price_data["discount"] + shippingCost
+    shipping_cost = price_data["quantity"] * shipping_per_case
+    return price_data["basePrice"] - price_data["discount"] + shipping_cost
 
 
 if __name__ == "__main__":
