@@ -1,4 +1,5 @@
 from __future__ import annotations  # NameError in use before define
+
 from dataclasses import dataclass
 from typing import List
 
@@ -24,12 +25,11 @@ def render_to_html(person: Person):
         return "\n".join(result)
 
     def list_recent_photos(photos: List[Photo]):
-
         return "\n".join([f"<div>{emit_photo_data(p)}</div>" for p in photos if p.date > resent_date()])
 
     def emit_photo_data(photo: Photo):
         result = []
-        result.append(f"<p>title: {person.photo.title}</p>")
+        result.append(f"<p>title: {photo.title}</p>")
         result.append(f"<p>date: {photo.date}</p>")
         result.append(f"<p>location: {photo.location}</p>")
         return "\n".join(result)
@@ -44,27 +44,33 @@ def render_to_html(person: Person):
 def render_to_html_stage1(person: Person):
     print("=== stage 1(6.1 Extract Function) ===")
 
-    def render_person(person):
+    def extract_function(photo: Photo):  # 6.1 Extract Function, a short time function
+        return "\n".join([f"<p>title: {photo.title}</p>", f"<p>date: {photo.date}</p>"])
+
+    def render_person(person):  # First caller
         result = []
         result.append(f"<p>{person.name}</p>")
-        result.append(ec_new_function(person.photo))
-        result.append(f"<p>location: {person.photo.location}</p>")
+        result.append(extract_function(person.photo))  # 6.2 Inline Function
+        result.append(f"<p>location: {person.photo.location}</p>")  # 6.2
         return "\n".join(result)
 
-    def list_recent_photos(photos: List[Photo]):
-        return "\n".join([f"<div>{ec_new_function(p)}</div>" for p in photos if p.date > resent_date()])
+    def list_recent_photos(photos: List[Photo]):  # Next caller
+        return "\n".join(
+            [
+                f"<div>{extract_function(photo)}<p>location: {photo.location}</p></div>"
+                for photo in photos
+                if photo.date > resent_date()
+            ]
+        )
 
-    def emit_photo_data(photo: Photo):
+    def emit_photo_data(photo: Photo):  # Third caller
         result = []
-        result.append(ec_new_function(photo))
+        result.append(extract_function(photo))
         result.append(f"<p>location: {photo.location}</p>")
         return "\n".join(result)
 
     def resent_date():
         return "2021-11-27"
-
-    def ec_new_function(photo: Photo):
-        return "\n".join([f"<p>{person.name}</p>", f"<p>date: {photo.date}</p>"])
 
     print("=== render_person ===\n", render_person(person))
     print("=== list_recent_photos ===\n", list_recent_photos([person.photo]))
@@ -72,6 +78,9 @@ def render_to_html_stage1(person: Person):
 
 def render_to_html_stage2(person: Person):
     print("=== stage 2(6.5 Change Function Declaration) ===")
+
+    def emit_photo_data(photo: Photo):  # repalce old emit_photo_data() with extract_function()
+        return "\n".join([f"<p>title: {photo.title}</p>", f"<p>date: {photo.date}</p>"])
 
     def render_person(person):
         result = []
@@ -85,9 +94,6 @@ def render_to_html_stage2(person: Person):
 
     def resent_date():
         return "2021-11-27"
-
-    def emit_photo_data(photo: Photo):
-        return "\n".join([f"<p>{person.name}</p>", f"<p>date: {photo.date}</p>"])
 
     print("=== render_person ===\n", render_person(person))
     print("=== list_recent_photos ===\n", list_recent_photos([person.photo]))

@@ -31,7 +31,7 @@ class AccountType:
 Examples
 
 - `python 801_move_function.py.py`
-- [801_move_function.py.py](./801_move_function.py.py)
+- [801_move_function.py.py](./801_move_function.py)
 
 ## 8.2 Move Field
 
@@ -187,9 +187,22 @@ Sketch
 
 ```python
 # before
+youngest = 100
+total_salary = 0
 
+for p in info:
+    if p.age < youngest:
+        youngest = p.age
+    total_salary += p.salary
 # after
+youngest = 100
+for p in info:
+    if p.age < youngest:
+        youngest = p.age
 
+total_salary = 0
+for p in info:
+    total_salary += p.salary
 ```
 
 Examples

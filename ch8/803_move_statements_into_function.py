@@ -1,4 +1,5 @@
 from __future__ import annotations  # NameError in use before define
+
 from dataclasses import dataclass
 
 
@@ -66,7 +67,9 @@ def render_to_html_stage1(person: Person):
         return "\n".join(result)
 
     def ec_new_function(photo: Photo):
-        return "\n".join([f"<p>{person.name}</p>", f"<p>location: {photo.location}</p>", f"<p>date: {photo.date}</p>"])
+        return "\n".join(
+            [f"<p>title: {photo.title}</p>", f"<p>location: {photo.location}</p>", f"<p>date: {photo.date}</p>"]
+        )
 
     print("=== render_person ===\n", render_person(person))
     print("=== photo_div ===\n", photo_div(person.photo))
@@ -90,7 +93,9 @@ def render_to_html_stage2(person: Person):
         return "\n".join(result)
 
     def emit_photo_data(photo: Photo):
-        return "\n".join([f"<p>{person.name}</p>", f"<p>location: {photo.location}</p>", f"<p>date: {photo.date}</p>"])
+        return "\n".join(
+            [f"<p>title: {photo.title}</p>", f"<p>location: {photo.location}</p>", f"<p>date: {photo.date}</p>"]
+        )
 
     print("=== render_person ===\n", render_person(person))
     print("=== photo_div ===\n", photo_div(person.photo))
@@ -99,5 +104,5 @@ def render_to_html_stage2(person: Person):
 if __name__ == "__main__":
     person = Person(name="lee", photo=Photo("profile", "2021-11-27 19:48:24", "beijing"))
     render_to_html(person)
-    # render_to_html_stage1(person)
-    render_to_html_stage2(person)
+    render_to_html_stage1(person)
+    # render_to_html_stage2(person)

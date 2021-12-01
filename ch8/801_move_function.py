@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 # before
 class Account:
     def __init__(self, days_overdrawn, premium: bool) -> None:
@@ -36,11 +37,7 @@ class AccountType:
     def overdraft_charge(self, days_overdrawn):
         if not self.premium:
             return days_overdrawn * 1.7
-        base_charge = 10
-        if days_overdrawn <= 7:
-            return base_charge
-        else:
-            return base_charge + (days_overdrawn - 7) * 0.85
+        return 10 + max(0, (days_overdrawn - 7) * 0.85)
 
 
 class NewAccount:
