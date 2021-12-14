@@ -88,7 +88,7 @@ result.append(emit_photo_data(person.photo))
 
 def emit_photo_data(photo: Photo):
     return "\n".join([
-        f"<p>{person.name}</p>", 
+        f"<p>{photo.title}</p>", 
         f"<p>location: {photo.location}</p>", 
         f"<p>date: {photo.date}</p>"
     ])
