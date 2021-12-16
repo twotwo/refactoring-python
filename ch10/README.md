@@ -10,27 +10,24 @@ Motivation
 
 - 复杂的条件逻辑是最常导致复杂度上升的地点之一
 - 将它分解为多个独立的函数，经常会带来很大价值
+- 本重构手法其实只是6.1-提炼函数（106）的一个应用场景
 
 Sketch
 
 ```python
-# before
-class Account:
+def charge_before(plan: Plan):
+    if plan.month > 6 and plan.month < 10:
+        return plan.quantity * plan.summer_rate
+    else:
+        return plan.quantity * plan.regular_rate + plan.regular_service_charge
 
-    @property
-    def overdraft_charge(self):
-        ...
-
-# after
-class AccountType:
-    def overdraft_charge(self, days_overdrawn):
-        ...
+def charge_after(plan: Plan):
+    return plan.summer_charge() if plan.summer() else plan.regular_charge()
 ```
 
 Examples
 
-- `python 801_move_function.py.py`
-- [801_move_function.py.py](./801_move_function.py)
+- [1001_decompose_conditional.py](./1001_decompose_conditional.py)
 
 ## 10.2 Consolidate Conditional Expression
 
@@ -43,24 +40,23 @@ Sketch
 
 ```python
 # before
-@dataclass
-class Customer:
-    contract: CustomerContract
-    discount_rate: float
+if employee.seniority < 2:
+  return 0
+if employee.months_disabled > 12:
+  return 0
+if employee.part_time:
+  return 0
 
 # after
-class Customer:
-    contract: CustomerContract
-
-    @property
-    discount_rate(self):
-        return contract.discount_rate()
+if is_not_eligible_for_disablility(employee):
+  return 0
+def is_not_eligible_for_disablility(employee):
+  return employee.seniority < 2 or employee.months_disabled > 12 or employee.part_time
 ```
 
 Examples
 
-- `python 802_move_field.py`
-- [802_move_field.py](./802_move_field.py)
+- [1002_consolidate_conditional_expression.py](./1002_consolidate_conditional_expression.py)
 
 ## 10.3 Replace Nested Conditional with Guard Clauses
 
@@ -72,26 +68,33 @@ Sketch
 
 ```python
 # before
-result.append(f"<p>title: {person.photo.title}</p>")
-result.append(emit_photo_data(person.photo))
-
-def emit_photo_data(photo: Photo):
-    result = []
-    result.append(f"<p>location: {photo.location}</p>")
-    result.append(f"<p>date: {photo.date}</p>")
-    return "\n".join(result)
+def get_pay_amount(person):
+    result = 0
+    if person.dead:
+        result = dead_amount()
+    else:
+        if person.seperated:
+            result = seperated_amount()
+        else:
+            if person.retired:
+                result = retired_amount()
+            else:
+                result = normal_pay_amount()
+    return result
 # after
-result.append(emit_photo_data(person.photo))
-
-def emit_photo_data(photo: Photo):
-    return "\n".join([
-        f"<p>{person.name}</p>", 
-        f"<p>location: {photo.location}</p>", 
-        f"<p>date: {photo.date}</p>"
-    ])
+def get_pay_amount(person):
+    if person.dead:
+        return dead_amount()
+    if person.seperated:
+        return seperated_amount()
+    if person.retired:
+        return retired_amount()
+    return normal_pay_amount()
 ```
 
 Examples
+
+- [1003_replace_nested_conditional_with_guard_clauses.py](./1003_replace_nested_conditional_with_guard_clauses.py)
 
 ## 10.4 Replace Conditional with Polymorphism
 
@@ -104,26 +107,36 @@ Sketch
 
 ```python
 # before
-result.append(emit_photo_data(person.photo))
-
-def emit_photo_data(photo: Photo):
-    result = []
-    result.append(f"<p>title: {person.photo.title}</p>")
-    result.append(f"<p>location: {photo.location}</p>")
-    return "\n".join(result)
+if bird.type == 'EuropeanSwallow':
+    return "average"
+if bird.type == 'AfricanSwallow':
+    return "tired" if bird.number_of_coconuts > 2 else "average"
+if bird.type == 'NorwegianBlueParrot':
+    return "scorched" if bird.voltage > 100 else "beautiful"
+return "unknown"
 # after
-result.append(emit_photo_data(person.photo))
-result.append(f"<p>location: {person.photo.location}</p>")
+class EuropeanSwallow:
+    def plumage(self):
+        return "average"
 
-def emit_photo_data(photo: Photo):
-    result = []
-    result.append(f"<p>title: {person.photo.title}</p>")
-    return "\n".join(result)
+class AfricanSwallow:
+    def plumage(self):
+        return "tired" if self.number_of_coconuts > 2 else "average"
+
+class NorwegianBlueParrot:
+    def plumage(self):
+        return "scorched" if self.voltage > 100 else "beautiful"
 ```
 
 Examples
 
+- [1004_replace_conditional_with_polymorphism.py](./1004_replace_conditional_with_polymorphism.py) # 本章最复杂的一个例子
+
 ## 10.5 Introduce Special Case
+
+Previous Names
+
+- Introduce Null Object
 
 Motivation
 
@@ -133,34 +146,39 @@ Sketch
 
 ```python
 # before
-applies_to_mass = False
-for s in states:
-    if s == "MA":
-        applies_to_mass = True
+if customer == "unknown":
+  customer_name = "occupant"
+
 # after
-applies_to_mass = any(True for s in states if s == "MA")
+class UnknownCustomer:
+  @properties
+  def name(self):
+    return "occupant"
 ```
+
+Examples
+
+- [1005_introduce_special_case.py](./1005_introduce_special_case.py)
 
 ## 10.6 Introduce Assertion
 
 Motivation
 
-- 使用断言明确标明这些保证代码正确允许的条件
+- 使用断言明确标明保证代码正确允许的条件
+- 断言是一种很好的交流形式，对调试也有帮助
 
 Sketch
 
 ```python
 # before
-pricing_plan = retrieve_pricing_plan()
-order = retreive_order()
-charge_per_unit = pricing_plan.unit
+if discount_rate:
+    base = base - discount_rate * rate
 # after
-pricing_plan = retrieve_pricing_plan()
-charge_per_unit = pricing_plan.unit
-order = retreive_order()
+assert discount_rate >= 0
+if discount_rate:
+    base = base - discount_rate * rate
 ```
 
 Examples
 
-- `python 806_slide_statements.py`
-- [806_slide_statements.py](./806_slide_statements.py)
+- [1006_introduce_assertion.py](./1006_introduce_assertion.py)
