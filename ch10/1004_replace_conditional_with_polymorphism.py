@@ -265,6 +265,7 @@ class ExperiencedChinaRating(Rating):
 
 # 8.4 Move Statements to Callers && 6.5 Change Function Declaration
 
+
 class NewRating:
     @property
     def voyageProfitFactor(self):

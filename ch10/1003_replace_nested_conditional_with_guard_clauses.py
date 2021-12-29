@@ -39,7 +39,7 @@ def adjusted_capital_stage2(instrument):
     result = 0
     if instrument.capital <= 0:
         return result
-    if instrument.interest_rate <= 0 or instrument.duration < 0:  # elimination of not logic
+    if instrument.interest_rate <= 0 or instrument.duration <= 0:  # elimination of not logic
         return result
     result = (instrument.income / instrument.duration) * instrument.adjustment_factor
     return result
@@ -47,7 +47,7 @@ def adjusted_capital_stage2(instrument):
 
 def adjusted_capital_stage3(instrument):
     if (
-        instrument.capital <= 0 or instrument.interest_rate <= 0 or instrument.duration < 0
+        instrument.capital <= 0 or instrument.interest_rate <= 0 or instrument.duration <= 0
     ):  # 10.2 Consolidate Conditional Expression
         return 0
     return (instrument.income / instrument.duration) * instrument.adjustment_factor

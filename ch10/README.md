@@ -40,18 +40,18 @@ Sketch
 
 ```python
 # before
-if employee.seniority < 2:
-  return 0
 if employee.months_disabled > 12:
+  return 0
+if employee.seniority < 2:
   return 0
 if employee.part_time:
   return 0
 
 # after
-if is_not_eligible_for_disablility(employee):
-  return 0
 def is_not_eligible_for_disablility(employee):
   return employee.seniority < 2 or employee.months_disabled > 12 or employee.part_time
+if is_not_eligible_for_disablility(employee):
+  return 0
 ```
 
 Examples

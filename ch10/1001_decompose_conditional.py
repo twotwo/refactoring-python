@@ -16,7 +16,7 @@ class Plan:
     regular_service_charge: float
 
     def summer(self):
-        return self.month > 6 and self.month < 10
+        return 6 and self.month < 10
 
     def summer_charge(self):
         return self.quantity * self.summer_rate
